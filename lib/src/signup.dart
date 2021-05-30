@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/services/database.dart';
 import 'package:flutter_login_signup/src/Widget/bezierContainer.dart';
 import 'package:flutter_login_signup/src/loginPage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,13 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final usernameCon = TextEditingController();
+  final emailCon = TextEditingController();
+  final passCon = TextEditingController();
+  int userCounter=0;
+  Map<String,dynamic> fetchedData;
+  String fetchedDataString;
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -48,6 +56,14 @@ class _SignUpPageState extends State<SignUpPage> {
             height: 10,
           ),
           TextField(
+              // onChanged: (text) {
+              //   print('$title text field: $text');
+              // },
+              controller: title == "Username"
+                  ? usernameCon
+                  : title == "Email id"
+                      ? emailCon
+                      : passCon,
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
@@ -59,27 +75,53 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-      child: Text(
-        'Register Now',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+    return GestureDetector(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+        child: Text(
+          'Register Now',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
+      onTap: (){
+        print("usernameCon is: " + usernameCon.text);
+        print("emailCon is: " + emailCon.text);
+        print("passCon is: " + passCon.text);
+        if(usernameCon.text!=null &&
+            emailCon.text!=null && passCon.text!=null){
+          Map<String,dynamic> userRegMap = {
+            "username":usernameCon.text,
+            "email id":emailCon.text,
+            "password":passCon.text,
+          };
+          DatabaseMethods().addUserInfoToDB
+            (userCounter.toString(), userRegMap);
+          userCounter++;
+          usernameCon.clear();
+          emailCon.clear();
+          passCon.clear();
+          fetchedData=userRegMap;
+          fetchedData.forEach((k,v) => print('${k}: ${v}'));
+          fetchedData.forEach((k,v) {
+            fetchedDataString+='${k}: ${v}';
+          });
+        }
+      },
     );
   }
 
@@ -146,6 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
         _entryField("Username"),
         _entryField("Email id"),
         _entryField("Password", isPassword: true),
+    Text(fetchedDataString),
       ],
     );
   }
