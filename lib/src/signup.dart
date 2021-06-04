@@ -19,7 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final passCon = TextEditingController();
   int userCounter=0;
   Map<String,dynamic> fetchedData;
-  String fetchedDataString;
+  String fetchedDataString=" ";
 
   Widget _backButton() {
     return InkWell(
@@ -56,9 +56,6 @@ class _SignUpPageState extends State<SignUpPage> {
             height: 10,
           ),
           TextField(
-              // onChanged: (text) {
-              //   print('$title text field: $text');
-              // },
               controller: title == "Username"
                   ? usernameCon
                   : title == "Email id"
@@ -116,10 +113,12 @@ class _SignUpPageState extends State<SignUpPage> {
           emailCon.clear();
           passCon.clear();
           fetchedData=userRegMap;
-          fetchedData.forEach((k,v) => print('${k}: ${v}'));
-          fetchedData.forEach((k,v) {
-            fetchedDataString+='${k}: ${v}';
-          });
+          // fetchedData.forEach((k,v) => print('${k}: ${v}'));
+          if(fetchedData!=null){
+            fetchedData.forEach((k, v) {
+              fetchedDataString += '${k}: ${v}';
+            });
+          }
         }
       },
     );
@@ -188,7 +187,7 @@ class _SignUpPageState extends State<SignUpPage> {
         _entryField("Username"),
         _entryField("Email id"),
         _entryField("Password", isPassword: true),
-    Text(fetchedDataString),
+    Text(fetchedDataString!=null?fetchedDataString:"EMpty "),
       ],
     );
   }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "158685316342",
+    "project_id": "login-signup-flutter-demo-app",
+    "storage_bucket": "login-signup-flutter-demo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158685316342:android:63c93a8a246c674ad798d7",
+        "android_client_info": {
+          "package_name": "thealphamerc.flutter_login_signup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158685316342-oa6rfbuk4sb6uqvgo7drma7abc77g56r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPXohp9foH8Y8upe4JQ8tEw3K5PKdaE64"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158685316342-oa6rfbuk4sb6uqvgo7drma7abc77g56r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

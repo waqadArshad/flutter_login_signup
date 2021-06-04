@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/services/database.dart';
+import 'package:flutter_login_signup/src/homePage.dart';
 import 'package:flutter_login_signup/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,6 +17,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final emailCon = TextEditingController();
+  final passCon = TextEditingController();
+  Stream usersStream;
+
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -49,6 +58,9 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextField(
+              controller: title == "Email id"
+                  ? emailCon
+                  : passCon,
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
@@ -59,28 +71,128 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // checkLoginCredetials(){}
+
+  //-----------
+  showAlertDialog(BuildContext context, String error) {
+    // Create button  
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog  
+    AlertDialog alert = AlertDialog(
+      title: Text("Simple Alert"),
+      content: Text("This is an alert message."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog  
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+    //-------------
+
+  String username="";
+  //  loginUser(String email, String password) {
+  //   StreamBuilder(
+  //     stream: usersStream,
+  //     builder: (context, snapshot) {
+  //       if (snapshot.hasData) {
+  //          DocumentSnapshot ds = snapshot.data.docs[0];
+  //          print("ds is: $ds");
+  //          if(ds["email id"]==email && ds["password"]==password){
+  //            Navigator.push(
+  //                context, MaterialPageRoute(builder: (context) => Home(username: username)));
+  //          }
+  //          else{
+  //            showAlertDialog(context, "Sorry! Wrong Password."
+  //                " Try Again!");
+  //          }
+  //       } else {
+  //         print("in else bacause of snapshot");
+  //         // return Center(
+  //         //   child: CircularProgressIndicator(),
+  //         // );
+  //       }
+  //     },
+  //   );
+  // }
+
+  Widget searchUsersList() {
+    return StreamBuilder(
+      stream: usersStream,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+          itemCount: snapshot.data.docs.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            DocumentSnapshot ds = snapshot.data.docs[index];
+            print("Document Snapshot");
+            print(ds);
+            return Container(
+              child: Row(
+                children: [
+                  Text(ds["username"]),
+                  Text(ds["email id"]),
+                  Text(ds["password"]),
+                ],
+            ),
+            );
+          },
+        )
+            : Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
   Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-      child: Text(
-        'Login',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+    return GestureDetector(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+        child: Text(
+          'Login',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
+      onTap: () async {
+        usersStream = await DatabaseMethods().getUserByEmail(emailCon.text);
+        print("UsersStream is $usersStream");
+        if(usersStream!=null){
+          print("not null");
+          
+          // searchUsersList();
+          print(usersStream);
+          print(emailCon.text + passCon.text);
+        }
+      },
     );
   }
 
@@ -227,6 +339,7 @@ class _LoginPageState extends State<LoginPage> {
       children: <Widget>[
         _entryField("Email id"),
         _entryField("Password", isPassword: true),
+        searchUsersList(),
       ],
     );
   }
@@ -277,3 +390,6 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 }
+
+
+
